@@ -1,5 +1,7 @@
 import sys
 
+from chip8_dasm.cli import main
+
 if sys.version_info < (3, 7):
     sys.stderr.write("\nc8dasm requires Python 3.7 or later.\n")
     sys.stderr.write(
@@ -9,4 +11,4 @@ if sys.version_info < (3, 7):
     sys.exit(1)
 
 if __name__ == "__main__":
-    print("\nCHIP-8 Disassembler\n")
+    main()
