@@ -8,6 +8,9 @@ from nox.sessions import Session
 
 nox.options.reuse_existing_virtualenvs = True
 
+locations = "src", "tests", "noxfile.py"
+
+
 @nox.session(python=["3.7", "3.8", "3.9"])
 def tests(session) -> Session:
     """Run the test suite (using Pytest)."""
@@ -17,9 +20,20 @@ def tests(session) -> Session:
     install(session, "coverage[toml]", "pytest", "pytest-cov", "expects")
     session.run("pytest", *args)
 
+
+@nox.session(python="3.7")
+def format(session: Session) -> Session:
+    """Run the code formatter (using Black)."""
+
+    args = session.posargs or locations
+    install(session, "black")
+    session.run("black", *args)
+
+
 # ===========================================================================
 # Nox File Helpers
 # ===========================================================================
+
 
 class CustomNamedTemporaryFile:
     """
