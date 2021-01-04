@@ -1,2 +1,3 @@
 # chip8-dasm
-A CHIP-8 Disassembler
+
+This project will be hosting my own attempt at a CHIP-8 disassembler.
