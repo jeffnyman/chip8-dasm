@@ -1,6 +1,7 @@
-import click
+"""Command line interface module for the disassembler."""
 
 from chip8_dasm import __version__
+import click
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 

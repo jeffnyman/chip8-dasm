@@ -1,3 +1,5 @@
+"""Entry point module for the disassembler."""
+
 import sys
 
 from chip8_dasm.cli import main

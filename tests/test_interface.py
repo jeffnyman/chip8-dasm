@@ -1,8 +1,7 @@
+from chip8_dasm import __version__, cli
 from click.testing import CliRunner
 from expects import equal, expect
 import pytest
-
-from chip8_dasm import __version__, cli
 
 
 @pytest.fixture

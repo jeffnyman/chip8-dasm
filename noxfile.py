@@ -1,3 +1,5 @@
+"""Provide sessions for project automation."""
+
 import os
 import tempfile
 from types import TracebackType
@@ -12,7 +14,7 @@ locations = "src", "tests", "noxfile.py"
 
 
 @nox.session(python=["3.7", "3.8", "3.9"])
-def tests(session) -> Session:
+def tests(session: Session) -> Session:
     """Run the test suite (using Pytest)."""
 
     args = session.posargs or ["--cov"]
@@ -28,6 +30,23 @@ def format(session: Session) -> Session:
     args = session.posargs or locations
     install(session, "black")
     session.run("black", *args)
+
+
+@nox.session(python=["3.7", "3.8", "3.9"])
+def lint(session: Session) -> Session:
+    """Run the linters (using flake8)."""
+
+    args = session.posargs or locations
+    install(
+        session,
+        "flake8",
+        "flake8-annotations",
+        "flake8-black",
+        "flake8-bugbear",
+        "flake8-docstrings",
+        "flake8-import-order",
+    )
+    session.run("flake8", *args)
 
 
 # ===========================================================================
