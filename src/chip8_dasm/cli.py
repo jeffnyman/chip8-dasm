@@ -16,6 +16,8 @@ def cli(rom_file: str) -> None:
     click.echo("ROM File: ", nl=False)
     click.secho(f"{rom_file}", fg="green", bold=True)
 
+    pass
+
 def main() -> None:
     """Entry point for the disassembler."""
 
