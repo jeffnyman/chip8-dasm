@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "chip8-dasm"
+version = "0.1.0"
+description = "A CHIP-8 Disassembler"
+license = "MIT"
+authors = ["Jeff Nyman <jeffnyman@gmail.com>"]
+repository = "https://github.com/jeffnyman/chip8-dasm"
+keywords = [
+  "chip-8",
+  "disassembler"
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
