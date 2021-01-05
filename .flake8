@@ -14,11 +14,10 @@ docstring-convention = google
 # ANN101 (Missing type annotation for self in method)
 # ANN204 (Missing return type annotation for special method)
 
-ignore = D202,D212
+ignore = D107,D202,D212,ANN101,ANN204
 
 per-file-ignores =
   __version__.py:D100
   __init__.py:D104
   tests/*:D100,D103
   tests/__init__.py:D104
-  noxfile.py:D107,ANN101,ANN204

@@ -1,6 +1,7 @@
 """Command line interface module for the disassembler."""
 
 from chip8_dasm import __version__
+from chip8_dasm.disassembler import Disassembler
 import click
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
@@ -18,7 +19,8 @@ def cli(rom_file: str) -> None:
     click.echo("ROM File: ", nl=False)
     click.secho(f"{rom_file}", fg="green", bold=True)
 
-    pass
+    dasm = Disassembler(rom_file)
+    assert isinstance(dasm.rom_data, bytearray)
 
 
 def main() -> None:
