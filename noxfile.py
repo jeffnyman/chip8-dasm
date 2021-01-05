@@ -49,6 +49,15 @@ def lint(session: Session) -> Session:
     session.run("flake8", *args)
 
 
+@nox.session(python=["3.7", "3.8", "3.9"])
+def typing(session: Session) -> Session:
+    """Run the type checker (using mypy)."""
+
+    args = session.posargs or locations
+    install(session, "mypy")
+    session.run("mypy", *args)
+    # mypy  module_name
+
 # ===========================================================================
 # Nox File Helpers
 # ===========================================================================
