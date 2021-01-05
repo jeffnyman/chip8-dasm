@@ -9,6 +9,7 @@ import nox
 from nox.sessions import Session
 
 nox.options.reuse_existing_virtualenvs = True
+nox.options.sessions = "lint", "typing", "tests"
 
 locations = "src", "tests", "noxfile.py"
 
