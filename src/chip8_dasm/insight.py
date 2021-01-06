@@ -9,6 +9,8 @@ class Insight:
     def opcode(self, data: bytearray, offset: int) -> None:
         """Provide binary breakdown of opcode processing."""
 
+        click.secho("\nOpcode", fg="cyan", bold=True)
+
         click.secho(
             f"{self.binary(data[offset])[2:].rjust(13, ' ')}",
             fg="yellow",
@@ -41,12 +43,12 @@ class Insight:
 
         full_value = data[offset] << 8 | data[offset + 1]
 
-        click.secho(f"\t= {full_value} ({hex(full_value)})")
+        click.secho(f"\t{full_value} ({hex(full_value)})")
 
     def operation(self, opcode: int) -> None:
         """Provide binary breakdown of operation bits from opcode."""
 
-        click.secho("\nOperation", fg="green", bold=True)
+        click.secho("\nOperation", fg="cyan", bold=True)
 
         click.secho(
             f"{self.binary(opcode)[2:].rjust(16, ' ')}",
