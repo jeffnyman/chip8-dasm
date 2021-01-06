@@ -32,6 +32,13 @@ class Disassembler:
         operation = self.read_operation(opcode)
         assert isinstance(operation, int)
 
+        if operation == 0x1000:
+            # 1NNN: Jumps to address NNN.
+            address = self.read_address(opcode)
+            assert isinstance(address, int)
+        else:
+            print("Unknown opcode: 0x{:04x}".format(opcode))
+
     def read_opcode(self) -> int:
         """
         Read individual opcode from binary data.
@@ -58,6 +65,14 @@ class Disassembler:
             self.insight.operation(opcode)
 
         return opcode & 0xF000
+
+    def read_address(self, opcode: int) -> int:
+        """Read an individual address from the opcode."""
+
+        if self.insight:
+            self.insight.address(opcode)
+
+        return opcode & 0xFFF
 
     def seed_rom_data(self, rom_data: list) -> None:
         """Seed ROM data.

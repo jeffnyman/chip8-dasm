@@ -61,7 +61,7 @@ class Insight:
         click.secho(f"{self.binary(0xf000)[2:]}", fg="yellow", bold=True, nl=False)
         click.echo("\t0xF000")
 
-        click.echo("----------------\topcode & xF000")
+        click.echo("----------------\topcode & 0xF000")
 
         click.secho(
             f"{self.binary(opcode & 0xf000)[2:].rjust(16, ' ')}",
@@ -71,6 +71,39 @@ class Insight:
         )
 
         value = opcode & 0xF000
+
+        click.echo(f"\t{value} ({hex(value)})")
+
+    def address(self, opcode: int) -> None:
+        """Provide binary breakdown of address from opcode."""
+
+        click.secho("\nAddress", fg="cyan", bold=True)
+
+        # 0xfff = 4095
+
+        click.secho(
+            f"{self.binary(opcode)[2:].rjust(16, ' ')}",
+            fg="yellow",
+            bold=True,
+            nl=False,
+        )
+        click.echo("\topcode")
+
+        click.secho(
+            f"{self.binary(0xfff)[2:].rjust(16, ' ')}", fg="yellow", bold=True, nl=False
+        )
+        click.echo("\t0xFFF")
+
+        click.echo("----------------\topcode & 0xFFF")
+
+        click.secho(
+            f"{self.binary(opcode & 0xfff)[2:].rjust(16, ' ')}",
+            fg="yellow",
+            bold=True,
+            nl=False,
+        )
+
+        value = opcode & 0xFFF
 
         click.echo(f"\t{value} ({hex(value)})")
 
