@@ -29,6 +29,9 @@ class Disassembler:
         opcode = self.read_opcode()
         assert isinstance(opcode, int)
 
+        operation = self.read_operation(opcode)
+        assert isinstance(operation, int)
+
     def read_opcode(self) -> int:
         """
         Read individual opcode from binary data.
@@ -42,6 +45,19 @@ class Disassembler:
             self.insight.opcode(self.rom_data, offset)
 
         return self.rom_data[offset] << 8 | self.rom_data[offset + 1]
+
+    def read_operation(self, opcode: int) -> int:
+        """
+        Read the upper nibble / msb of an opcode.
+
+        An opocde encodes an operation and relevant data into a number. The
+        most significant byte, or upper nibble, contains the operation.
+        """
+
+        if self.insight:
+            self.insight.operation(opcode)
+
+        return opcode & 0xF000
 
     def seed_rom_data(self, rom_data: list) -> None:
         """Seed ROM data.

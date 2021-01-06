@@ -43,6 +43,35 @@ class Insight:
 
         click.secho(f"\t= {full_value} ({hex(full_value)})")
 
+    def operation(self, opcode: int) -> None:
+        """Provide binary breakdown of operation bits from opcode."""
+
+        click.secho("\nOperation", fg="green", bold=True)
+
+        click.secho(
+            f"{self.binary(opcode)[2:].rjust(16, ' ')}",
+            fg="yellow",
+            bold=True,
+            nl=False,
+        )
+        click.echo("\topcode")
+
+        click.secho(f"{self.binary(0xf000)[2:]}", fg="yellow", bold=True, nl=False)
+        click.echo("\t0xF000")
+
+        click.echo("----------------\topcode & xF000")
+
+        click.secho(
+            f"{self.binary(opcode & 0xf000)[2:].rjust(16, ' ')}",
+            fg="yellow",
+            bold=True,
+            nl=False,
+        )
+
+        value = opcode & 0xF000
+
+        click.echo(f"\t{value} ({hex(value)})")
+
     @staticmethod
     def binary(value: int, length: int = 8) -> str:
         """Convert an integer value into a binary representation."""
