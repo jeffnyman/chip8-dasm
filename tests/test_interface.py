@@ -25,7 +25,7 @@ def rom() -> Generator:
 
 def test_startup_succeeds(runner: CliRunner, rom: str) -> None:
     rom_name = os.path.basename(rom)
-    result = runner.invoke(cli.cli, [rom])
+    result = runner.invoke(cli.cli, [rom, "-i"])
 
     expect(result.exit_code).to(equal(0))
     expect(result.output).to(contain(f"ROM File: {rom_name}\n"))

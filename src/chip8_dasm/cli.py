@@ -12,7 +12,8 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 @click.command(context_settings=CONTEXT_SETTINGS)
 @click.version_option(version=__version__)
 @click.argument("rom_file", type=click.Path(exists=True))
-def cli(rom_file: str) -> None:
+@click.option("-i", "--insight", is_flag=True, help="execution details")
+def cli(rom_file: str, insight: bool) -> None:
     """Disassemble ROM_FILE.
 
     ROM_FILE is the rom binary file to load.
@@ -21,7 +22,7 @@ def cli(rom_file: str) -> None:
     click.echo("ROM File: ", nl=False)
     click.secho(f"{os.path.basename(rom_file)}", fg="green", bold=True)
 
-    dasm = Disassembler(rom_file)
+    dasm = Disassembler(rom_file, insight)
     assert isinstance(dasm.rom_data, bytearray)
 
     dasm.decode()

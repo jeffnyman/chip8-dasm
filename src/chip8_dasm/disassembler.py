@@ -1,5 +1,6 @@
 """Core disassembly module."""
 
+from chip8_dasm.insight import Insight
 from chip8_dasm.loader import Loader
 
 
@@ -8,8 +9,12 @@ class Disassembler:
 
     STARTING_ADDRESS = 0x200
 
-    def __init__(self, rom_file: str = None):
+    def __init__(self, rom_file: str = None, display_insight: bool = False):
         self.rom_file = rom_file
+        self.insight = None
+
+        if display_insight is True:
+            self.insight = Insight()
 
         if rom_file is not None:
             self.rom_data = Loader.load(rom_file)
@@ -32,9 +37,11 @@ class Disassembler:
         """
 
         offset = self.current_address - self.STARTING_ADDRESS
-        result = self.rom_data[offset] << 8 | self.rom_data[offset + 1]
 
-        return result
+        if self.insight:
+            self.insight.opcode(self.rom_data, offset)
+
+        return self.rom_data[offset] << 8 | self.rom_data[offset + 1]
 
     def seed_rom_data(self, rom_data: list) -> None:
         """Seed ROM data.
