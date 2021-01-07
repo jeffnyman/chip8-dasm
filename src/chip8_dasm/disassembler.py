@@ -2,6 +2,7 @@
 
 from chip8_dasm.insight import Insight
 from chip8_dasm.loader import Loader
+import click
 
 
 class Disassembler:
@@ -12,6 +13,10 @@ class Disassembler:
     def __init__(self, rom_file: str = None, display_insight: bool = False):
         self.rom_file = rom_file
         self.insight = None
+        self.disassembly = {}
+        self.opcodes = {
+            0x1000: "JP {:04x}"
+        }
 
         if display_insight is True:
             self.insight = Insight()
@@ -34,10 +39,36 @@ class Disassembler:
 
         if operation == 0x1000:
             # 1NNN: Jumps to address NNN.
+            # This jump doesn't remember its origin, so no stack interaction
+            # is required.
             address = self.read_address(opcode)
             assert isinstance(address, int)
+
+            self.add_to_disassembly(operation, address)
         else:
             print("Unknown opcode: 0x{:04x}".format(opcode))
+
+        print(self.disassembly)
+
+    def add_to_disassembly(self, operation: int, address: int):
+        """
+        Write disassembly data.
+
+        Information regarding the current address and the operation found at
+        that address is written to a data structure.
+        """
+
+        try:
+            self.disassembly[self.current_address] = self.opcodes[operation].format(
+                address
+            )
+        except KeyError as key_error:
+            click.secho(
+                f"\nThe key '{hex(key_error.args[0])}' is not "
+                "part of the opcode dictionary.\n",
+                fg="red",
+                bold=True,
+            )
 
     def read_opcode(self) -> int:
         """
