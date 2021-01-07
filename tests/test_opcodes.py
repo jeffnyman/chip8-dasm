@@ -8,7 +8,7 @@ def dasm() -> Disassembler:
     return Disassembler()
 
 
-def test_no_opcode(dasm):
+def test_no_opcode(dasm: Disassembler) -> None:
     rom_data = [0x99, 0x4E]
     dasm.seed_rom_data(rom_data)
     opcode = dasm.read_opcode()
@@ -19,11 +19,9 @@ def test_no_opcode(dasm):
     # actually provide an expectation.
 
 
-def test_1nnn(dasm):
+def test_1nnn(dasm: Disassembler) -> None:
     rom_data = [0x12, 0x4E]
     dasm.seed_rom_data(rom_data)
     dasm.decode()
 
-    expect(dasm.disassembly).to(equal({
-        0x200: 'JP 024e'
-    }))
+    expect(dasm.disassembly).to(equal({0x200: "JP 024e"}))

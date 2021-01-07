@@ -1,5 +1,7 @@
 """Core disassembly module."""
 
+from typing import Dict
+
 from chip8_dasm.insight import Insight
 from chip8_dasm.loader import Loader
 import click
@@ -13,10 +15,8 @@ class Disassembler:
     def __init__(self, rom_file: str = None, display_insight: bool = False):
         self.rom_file = rom_file
         self.insight = None
-        self.disassembly = {}
-        self.opcodes = {
-            0x1000: "JP {:04x}"
-        }
+        self.disassembly: Dict[int, str] = {}
+        self.opcodes = {0x1000: "JP {:04x}"}
 
         if display_insight is True:
             self.insight = Insight()
@@ -29,28 +29,33 @@ class Disassembler:
     def decode(self) -> None:
         """Process opcodes in ROM file."""
 
-        print(f"Current Address: {self.current_address} ({hex(self.current_address)})")
+        while self.current_address - self.STARTING_ADDRESS + 1 < len(self.rom_data):
+            print(
+                f"Current Address: {self.current_address} ({hex(self.current_address)})"
+            )
 
-        opcode = self.read_opcode()
-        assert isinstance(opcode, int)
+            opcode = self.read_opcode()
+            assert isinstance(opcode, int)
 
-        operation = self.read_operation(opcode)
-        assert isinstance(operation, int)
+            operation = self.read_operation(opcode)
+            assert isinstance(operation, int)
 
-        if operation == 0x1000:
-            # 1NNN: Jumps to address NNN.
-            # This jump doesn't remember its origin, so no stack interaction
-            # is required.
-            address = self.read_address(opcode)
-            assert isinstance(address, int)
+            if operation == 0x1000:
+                # 1NNN: Jumps to address NNN.
+                # This jump doesn't remember its origin, so no stack interaction
+                # is required.
+                address = self.read_address(opcode)
+                assert isinstance(address, int)
 
-            self.add_to_disassembly(operation, address)
-        else:
-            print("Unknown opcode: 0x{:04x}".format(opcode))
+                self.add_to_disassembly(operation, address)
+            else:
+                print("Unknown opcode: 0x{:04x}".format(opcode))
+
+            self.current_address += 2
 
         print(self.disassembly)
 
-    def add_to_disassembly(self, operation: int, address: int):
+    def add_to_disassembly(self, operation: int, address: int) -> None:
         """
         Write disassembly data.
 
