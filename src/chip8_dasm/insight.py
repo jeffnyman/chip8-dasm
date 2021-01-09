@@ -6,6 +6,13 @@ import click
 class Insight:
     """Provides insight into disassembly operations."""
 
+    def execution_context(self, opcode: int, operation: int) -> None:
+        """Provide context for current decoding operation."""
+
+        click.secho("\n== DECODING ==", fg="green", bold=True)
+        click.secho(f"\tOpcode: {hex(opcode)}")
+        click.secho(f"\tOperation: {hex(operation)}")
+
     def opcode(self, data: bytearray, offset: int) -> None:
         """Provide binary breakdown of opcode processing."""
 

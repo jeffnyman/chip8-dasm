@@ -49,6 +49,9 @@ class Disassembler:
             operation = self.read_operation(opcode)
             assert isinstance(operation, int)
 
+            if self.insight:
+                self.insight.execution_context(opcode, operation)
+
             if operation == 0x1000:
                 # 1NNN: Jumps to address NNN.
                 # This jump doesn't remember its origin, so no stack interaction
