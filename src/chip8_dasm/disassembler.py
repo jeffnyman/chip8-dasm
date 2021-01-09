@@ -1,6 +1,6 @@
 """Core disassembly module."""
 
-from typing import Dict
+from typing import Dict, List
 
 from chip8_dasm.insight import Insight
 from chip8_dasm.loader import Loader
@@ -16,6 +16,8 @@ class Disassembler:
         self.rom_file = rom_file
         self.insight = None
         self.disassembly: Dict[int, str] = {}
+        self.all_contexts: List[int] = []
+        self.current_contexts: List[int] = []
         self.opcodes = {0x1000: "JP {:04x}"}
 
         if display_insight is True:
@@ -26,10 +28,17 @@ class Disassembler:
 
         self.current_address = self.STARTING_ADDRESS
 
-    def decode(self) -> None:
+    def decode(self, address: int = None) -> None:
         """Process opcodes in ROM file."""
 
-        while self.current_address - self.STARTING_ADDRESS + 1 < len(self.rom_data):
+        self.current_address = address if address else self.STARTING_ADDRESS
+        context_change = False
+
+        while not context_change:
+            if self.current_address - self.STARTING_ADDRESS + 1 > len(self.rom_data):
+                self.context_change = True
+                break
+
             print(
                 f"Current Address: {self.current_address} ({hex(self.current_address)})"
             )
@@ -44,16 +53,24 @@ class Disassembler:
                 # 1NNN: Jumps to address NNN.
                 # This jump doesn't remember its origin, so no stack interaction
                 # is required.
+                context_change = True
+
                 address = self.read_address(opcode)
                 assert isinstance(address, int)
 
                 self.add_to_disassembly(operation, address)
+                self.add_context(address)
             else:
                 print("Unknown opcode: 0x{:04x}".format(opcode))
+                context_change = True
 
             self.current_address += 2
 
-        print(self.disassembly)
+            print(f"\nAll Contexts: {self.all_contexts}")
+            print(f"Current Contexts: {self.current_contexts}\n")
+
+        if len(self.current_contexts) > 0:
+            self.decode(self.current_contexts.pop())
 
     def add_to_disassembly(self, operation: int, address: int) -> None:
         """
@@ -74,6 +91,17 @@ class Disassembler:
                 fg="red",
                 bold=True,
             )
+
+    def add_context(self, address: int) -> None:
+        """
+        Add an address context to a list of contexts.
+
+        The focus here is that each jump or call to a routine
+        """
+
+        if address not in self.all_contexts:
+            self.current_contexts.append(address)
+            self.all_contexts.append(address)
 
     def read_opcode(self) -> int:
         """

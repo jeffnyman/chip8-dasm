@@ -27,6 +27,8 @@ def cli(rom_file: str, insight: bool) -> None:
 
     dasm.decode()
 
+    print(dasm.disassembly)
+
 
 def main() -> None:
     """Entry point for the disassembler."""
