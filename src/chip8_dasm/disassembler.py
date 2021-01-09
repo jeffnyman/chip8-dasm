@@ -17,8 +17,9 @@ class Disassembler:
         self.insight = None
         self.disassembly: Dict[int, str] = {}
         self.all_contexts: List[int] = []
+        self.labels: List[int] = []
         self.current_contexts: List[int] = []
-        self.opcodes = {0x1000: "JP {:04x}"}
+        self.opcodes = {0x1000: "JP lbl_0x{:04x}"}
 
         if display_insight is True:
             self.insight = Insight()
@@ -55,13 +56,15 @@ class Disassembler:
             if operation == 0x1000:
                 # 1NNN: Jumps to address NNN.
                 # This jump doesn't remember its origin, so no stack interaction
-                # is required.
+                # is required. However, it is worth having this recognized as a
+                # context change with a label.
                 context_change = True
 
                 address = self.read_address(opcode)
                 assert isinstance(address, int)
 
                 self.add_to_disassembly(operation, address)
+                self.add_label(address)
                 self.add_context(address)
             else:
                 print("Unknown opcode: 0x{:04x}".format(opcode))
@@ -70,7 +73,8 @@ class Disassembler:
             self.current_address += 2
 
             print(f"\nAll Contexts: {self.all_contexts}")
-            print(f"Current Contexts: {self.current_contexts}\n")
+            print(f"Current Contexts: {self.current_contexts}")
+            print(f"Labels: {self.labels}\n")
 
         if len(self.current_contexts) > 0:
             self.decode(self.current_contexts.pop())
@@ -105,6 +109,17 @@ class Disassembler:
         if address not in self.all_contexts:
             self.current_contexts.append(address)
             self.all_contexts.append(address)
+
+    def add_label(self, address: int) -> None:
+        """
+        Add label to the disassembled operation.
+
+        Any operation that leads to a jump or a call, and thus a context
+        change, can be provided a label that shows what address is being
+        referenced.
+        """
+
+        self.labels.append(address)
 
     def read_opcode(self) -> int:
         """
