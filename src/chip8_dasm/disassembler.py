@@ -1,6 +1,6 @@
 """Core disassembly module."""
 
-from typing import Dict, List
+from typing import Dict, List, Tuple, Union
 
 from chip8_dasm.insight import Insight
 from chip8_dasm.loader import Loader
@@ -19,7 +19,7 @@ class Disassembler:
         self.all_contexts: List[int] = []
         self.labels: List[int] = []
         self.current_contexts: List[int] = []
-        self.opcodes = {0x1000: "JP lbl_0x{:04x}"}
+        self.opcodes = {0x1000: "JP lbl_0x{:04x}", 0x6000: "LD V{}, 0x{:02x}"}
 
         if display_insight is True:
             self.insight = Insight()
@@ -66,6 +66,12 @@ class Disassembler:
                 self.add_to_disassembly(operation, address)
                 self.add_label(address)
                 self.add_context(address)
+
+            elif operation == 0x6000:
+                # 6XNN: Sets VX to NN.
+                vx = self.read_vx(opcode)
+                byte = self.read_byte(opcode)
+                self.add_to_disassembly(operation, vx, byte)
             else:
                 print("Unknown opcode: 0x{:04x}".format(opcode))
                 context_change = True
@@ -79,7 +85,9 @@ class Disassembler:
         if len(self.current_contexts) > 0:
             self.decode(self.current_contexts.pop())
 
-    def add_to_disassembly(self, operation: int, address: int) -> None:
+    def add_to_disassembly(
+        self, operation: int, *args: Union[int, Tuple[int, ...]]
+    ) -> None:
         """
         Write disassembly data.
 
@@ -89,7 +97,7 @@ class Disassembler:
 
         try:
             self.disassembly[self.current_address] = self.opcodes[operation].format(
-                address
+                *args
             )
         except KeyError as key_error:
             click.secho(
@@ -155,6 +163,26 @@ class Disassembler:
             self.insight.address(opcode)
 
         return opcode & 0xFFF
+
+    def read_byte(self, opcode: int) -> int:
+        """Read an individual set of 8 bits."""
+
+        # 0xff = 255
+
+        return opcode & 0xFF
+
+    def read_vx(self, opcode: int) -> int:
+        """
+        Read the value from a register.
+
+        The CHIP-8 has a series of 8-bit registers that arereferred to as Vx
+        and Vy, where x or y is a hexadecimal digit.
+        """
+
+        if self.insight:
+            self.insight.vx(opcode)
+
+        return (opcode & 0xF00) >> 8
 
     def seed_rom_data(self, rom_data: list) -> None:
         """Seed ROM data.
