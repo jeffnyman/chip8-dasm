@@ -16,30 +16,33 @@ class Insight:
     def opcode(self, data: bytearray, offset: int) -> None:
         """Provide binary breakdown of opcode processing."""
 
+        counter = len(self.binary(data[offset] << 8)[2:])
+        tabber = "\t\t" if counter < 16 else "\t"
+
         click.secho("\nOpcode", fg="cyan", bold=True)
 
         click.secho(
-            f"{self.binary(data[offset])[2:].rjust(13, ' ')}",
+            f"{self.binary(data[offset])[2:].rjust(counter, ' ')}",
             fg="yellow",
             bold=True,
             nl=False,
         )
-        click.echo("\tAddress offset\n")
+        click.echo(f"{tabber}Address offset\n")
 
         click.secho(
             f"{self.binary(data[offset] << 8)[2:]}", fg="yellow", bold=True, nl=False
         )
-        click.echo("\tAddress offset (shifted 8)")
+        click.echo(f"{tabber}Address offset (shifted 8)")
 
         click.secho(
-            f"{self.binary(data[offset + 1])[2:].rjust(13, ' ')}",
+            f"{self.binary(data[offset + 1])[2:].rjust(counter, ' ')}",
             fg="yellow",
             bold=True,
             nl=False,
         )
-        click.echo("\tAddress offset (+ 1)")
+        click.echo(f"{tabber}Address offset (+ 1)")
 
-        click.echo("-------------")
+        click.echo("-" * counter)
 
         click.secho(
             f"{self.binary(data[offset] << 8 | data[offset + 1])[2:]}",
@@ -50,7 +53,7 @@ class Insight:
 
         full_value = data[offset] << 8 | data[offset + 1]
 
-        click.secho(f"\t{full_value} ({hex(full_value)})")
+        click.secho(f"{tabber}{full_value} ({hex(full_value)})")
 
     def operation(self, opcode: int) -> None:
         """Provide binary breakdown of operation bits from opcode."""
