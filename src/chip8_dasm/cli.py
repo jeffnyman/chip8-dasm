@@ -4,6 +4,7 @@ import os
 
 from chip8_dasm import __version__
 from chip8_dasm.disassembler import Disassembler
+from chip8_dasm.writer import Writer
 import click
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
@@ -27,7 +28,8 @@ def cli(rom_file: str, insight: bool) -> None:
 
     dasm.decode()
 
-    print(dasm.disassembly)
+    writer = Writer(dasm)
+    writer.generate()
 
 
 def main() -> None:
