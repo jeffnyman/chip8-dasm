@@ -19,7 +19,11 @@ class Disassembler:
         self.all_contexts: List[int] = []
         self.labels: List[int] = []
         self.current_contexts: List[int] = []
-        self.opcodes = {0x1000: "JP lbl_0x{:04x}", 0x6000: "LD V{}, 0x{:02x}"}
+        self.opcodes = {
+            0x1000: "JP lbl_0x{:04x}",
+            0x6000: "LD V{}, 0x{:02x}",
+            0xA000: "LD I, lbl_0x{:04x}",
+        }
 
         if display_insight is True:
             self.insight = Insight()
@@ -72,6 +76,14 @@ class Disassembler:
                 vx = self.read_vx(opcode)
                 byte = self.read_byte(opcode)
                 self.add_to_disassembly(operation, vx, byte)
+
+            elif operation == 0xA000:
+                # ANNN: Sets I to the address NNN.
+                address = self.read_address(opcode)
+                assert isinstance(address, int)
+
+                self.add_to_disassembly(operation, address)
+                self.add_label(address)
             else:
                 print("Unknown opcode: 0x{:04x}".format(opcode))
                 context_change = True
