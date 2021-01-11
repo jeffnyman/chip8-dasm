@@ -21,6 +21,7 @@ class Disassembler:
         self.current_contexts: List[int] = []
         self.opcodes = {
             0x1000: "JP lbl_0x{:04x}",
+            0x3000: "SE V{}, 0x{:02x}",
             0x6000: "LD V{}, 0x{:02x}",
             0xA000: "LD I, lbl_0x{:04x}",
             0xD000: "DRW V{}, V{}, 0x{:02x}",
@@ -71,6 +72,16 @@ class Disassembler:
                 self.add_to_disassembly(operation, address)
                 self.add_label(address)
                 self.add_context(address)
+
+            elif operation == 0x3000:
+                # 3XNN: Skips the next instruction if VX equals NN.
+
+                vx = self.read_vx(opcode)
+                byte = self.read_byte(opcode)
+                self.add_to_disassembly(operation, vx, byte)
+
+                next_address = self.current_address + 4
+                self.add_context(next_address)
 
             elif operation == 0x6000:
                 # 6XNN: Sets VX to NN.

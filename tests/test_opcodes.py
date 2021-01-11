@@ -27,6 +27,14 @@ def test_1nnn(dasm: Disassembler) -> None:
     expect(dasm.disassembly).to(equal({0x200: "JP lbl_0x024e"}))
 
 
+def test_3xkk(dasm: Disassembler) -> None:
+    rom_data = [0x32, 0x0A]
+    dasm.seed_rom_data(rom_data)
+    dasm.decode()
+
+    expect(dasm.disassembly).to(equal({0x200: "SE V2, 0x0a"}))
+
+
 def test_6xkk(dasm: Disassembler) -> None:
     rom_data = [0x67, 0x03]
     dasm.seed_rom_data(rom_data)
