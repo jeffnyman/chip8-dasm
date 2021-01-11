@@ -23,6 +23,7 @@ class Disassembler:
             0x1000: "JP lbl_0x{:04x}",
             0x6000: "LD V{}, 0x{:02x}",
             0xA000: "LD I, lbl_0x{:04x}",
+            0xD000: "DRW V{}, V{}, 0x{:02x}",
         }
 
         if display_insight is True:
@@ -84,6 +85,13 @@ class Disassembler:
 
                 self.add_to_disassembly(operation, address)
                 self.add_label(address)
+
+            elif operation == 0xD000:
+                # DXYN: Draws a sprite at coordinate (VX, VY).
+                vx = self.read_vx(opcode)
+                vy = self.read_vy(opcode)
+                nibble = opcode & 0xF  # 15
+                self.add_to_disassembly(operation, vx, vy, nibble)
             else:
                 print("Unknown opcode: 0x{:04x}".format(opcode))
                 context_change = True
@@ -195,6 +203,19 @@ class Disassembler:
             self.insight.vx(opcode)
 
         return (opcode & 0xF00) >> 8
+
+    def read_vy(self, opcode: int) -> int:
+        """
+        Read the value from a register.
+
+        The CHIP-8 has a series of 8-bit registers that arereferred to as Vx
+        and Vy, where x or y is a hexadecimal digit.
+        """
+
+        if self.insight:
+            self.insight.vy(opcode)
+
+        return (opcode & 0xF0) >> 4
 
     def seed_rom_data(self, rom_data: list) -> None:
         """Seed ROM data.

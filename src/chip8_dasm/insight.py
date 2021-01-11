@@ -159,6 +159,48 @@ class Insight:
 
         click.echo(f"\t{value} ({hex(value)})")
 
+    def vy(self, opcode: int) -> None:
+        """Provide binary breakdown of register."""
+
+        click.secho("\nvy", fg="cyan", bold=True)
+
+        # 0xf0 = 240
+
+        click.secho(
+            f"{self.binary(opcode)[2:].rjust(16, ' ')}",
+            fg="yellow",
+            bold=True,
+            nl=False,
+        )
+        click.echo("\topcode")
+
+        click.secho(
+            f"{self.binary(0xf0)[2:].rjust(16, ' ')}", fg="yellow", bold=True, nl=False
+        )
+        click.echo("\t0xF0")
+
+        click.echo("----------------\topcode & 0xF0")
+
+        click.secho(
+            f"{self.binary(opcode & 0xf0)[2:].rjust(16, ' ')}\n",
+            fg="yellow",
+            bold=True,
+            nl=False,
+        )
+
+        click.echo("----------------\t(opcode & 0xF0) >> 4")
+
+        click.secho(
+            f"{self.binary((opcode & 0xf0) >> 4)[2:].rjust(16, ' ')}",
+            fg="yellow",
+            bold=True,
+            nl=False,
+        )
+
+        value = (opcode & 0xF0) >> 4
+
+        click.echo(f"\t{value} ({hex(value)})")
+
     @staticmethod
     def binary(value: int, length: int = 8) -> str:
         """Convert an integer value into a binary representation."""

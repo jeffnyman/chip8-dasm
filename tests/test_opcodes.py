@@ -41,3 +41,11 @@ def test_Annn(dasm: Disassembler) -> None:
     dasm.decode()
 
     expect(dasm.disassembly).to(equal({0x200: "LD I, lbl_0x0202"}))
+
+
+def test_Dxyn(dasm: Disassembler) -> None:
+    rom_data = [0xD3, 0x47]
+    dasm.seed_rom_data(rom_data)
+    dasm.decode()
+
+    expect(dasm.disassembly).to(equal({0x200: "DRW V3, V4, 0x07"}))
