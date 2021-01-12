@@ -26,10 +26,27 @@ class Writer:
         dasm_buffer = "start:\n"
 
         while address < self.end_rom_file():
+            dasm_buffer += self.generate_labels(address)
+            dasm_buffer += self.generate_addresses(address)
             line, address = self.generate_instructions(address)
             dasm_buffer += line
 
         return dasm_buffer
+
+    def generate_labels(self, address: int) -> str:
+        """Iterate through all labels for the disassembly buffer."""
+
+        result = ""
+
+        if address in self.dasm.labels:
+            result = "lbl_0x{:04x}:\n".format(address)
+
+        return result
+
+    def generate_addresses(self, address: int) -> str:
+        """Iterate through all addresses for the disassembly buffer."""
+
+        return "             0x{:04x}\n".format(address)
 
     def generate_instructions(self, address: int) -> Tuple[str, int]:
         """Iterate through all instructions for the disassembly buffer."""
